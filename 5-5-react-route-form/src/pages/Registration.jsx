@@ -2,14 +2,28 @@ import { useState } from "react";
 
 export default function Registration() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [gender, setGender] = useState("");
 
   const [errors, setErrors] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    {/*Form validations*/}
 
-    // alert(`Regiteration submit: ${email}`);
+    const nextErrors = {};
+
+    if (!email.trim()) nextErrors.email = "Email is required";
+    else if (!(email.includes("@") && email.endsWith(".com")))
+      nextErrors.email = "Enter a valid email address";
+
+    if (!password.trim()) nextErrors.password = "Password is required";
+
+    if (!gender) nextErrors.gender = "Please select your gender";
+
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
+
+    alert(`Regiteration submit: ${email}`);
   };
 
   return (
@@ -20,6 +34,7 @@ export default function Registration() {
       </p>
 
       <form onSubmit={handleSubmit} className="card form neon">
+        {/* Email */}
         <div className="form-row">
           <label htmlFor="email">Email</label>
           <input
@@ -32,19 +47,61 @@ export default function Registration() {
             aria-describedby={errors.email ? "email-error" : undefined}
           />
           {errors.email && (
-            <p id="email-error" className="error">{errors.email}</p>
+            <p id="email-error" className="error">
+              {errors.email}
+            </p>
           )}
         </div>
+
+        {/* Password */}
         <div className="form-row">
-           {/*password*/}
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {errors.password && <p className="error">{errors.password}</p>}
         </div>
 
+        {/* Gender */}
         <fieldset className="form-row">
-          {/*Radio Button for gender*/}
+          <legend>Gender</legend>
+
+          <label className="radio">
+            <input
+              type="radio"
+              name="gender"
+              value="male"
+              checked={gender === "male"}
+              onChange={(e) => setGender(e.target.value)}
+            />
+            Male
+          </label>
+
+          <label className="radio">
+            <input
+              type="radio"
+              name="gender"
+              value="female"
+              checked={gender === "female"}
+              onChange={(e) => setGender(e.target.value)}
+            />
+            Female
+          </label>
+
+          {errors.gender && <p className="error">{errors.gender}</p>}
         </fieldset>
 
-          {/*Disable the submit button until all requirements met*/}
-        <button type="submit" className="btn">Register</button>
+        {/* Disable until all requirements met */}
+        <button
+          type="submit"
+          className="btn"
+          disabled={!email.trim() || !password.trim() || !gender}
+        >
+          Register
+        </button>
       </form>
 
       <div className="card info">
